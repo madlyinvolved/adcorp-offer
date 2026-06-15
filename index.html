@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADCORP — Конструктор Job Offer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-soft:#f6f7f9;
+    --panel:#fafbfc;
+    --line:#e7eaef;
+    --line-strong:#d4d9e0;
+    --txt:#0a0d14;
+    --txt-dim:#5a6377;
+    --txt-dimmer:#8a93a6;
+    --acc:#00ca7c;
+    --acc-dark:#00a663;
+    --acc-soft:#e6faf2;
+    --danger:#ef4565;
+    --display:'Unbounded',sans-serif;
+    --body:'Manrope',sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:#eef0f3;
+    color:var(--txt);
+    font-family:var(--body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding:88px 16px 48px;
+  }
+  ::selection{background:var(--acc);color:#fff}
+
+  /* contenteditable focus & placeholder */
+  [contenteditable]{outline:none;border-radius:3px;transition:background .15s,box-shadow .15s;cursor:text}
+  [contenteditable]:hover{background:rgba(0,202,124,0.06)}
+  [contenteditable]:focus{background:rgba(0,202,124,0.10);box-shadow:0 0 0 2px var(--acc)}
+  [contenteditable]:empty:not(:focus)::before{
+    content:attr(data-placeholder);color:var(--txt-dimmer);font-weight:400;font-style:italic;
+  }
+
+  /* TOOLBAR ============================================================= */
+  .toolbar{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+    padding:14px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  }
+  .tb-logo{font-family:var(--display);font-weight:800;font-size:16px;letter-spacing:-.6px;
+    display:flex;align-items:center;gap:7px;margin-right:8px}
+  .tb-logo .dot{width:8px;height:8px;border-radius:50%;background:var(--acc)}
+  .tb-divider{width:1px;height:24px;background:var(--line)}
+  .tb-btn{
+    background:var(--txt);color:#fff;font-family:var(--body);font-weight:700;font-size:13px;
+    border:none;padding:9px 18px;border-radius:100px;cursor:pointer;display:inline-flex;
+    align-items:center;gap:7px;transition:transform .15s,background .15s;
+  }
+  .tb-btn:hover{transform:translateY(-1px);background:#000}
+  .tb-btn.accent{background:var(--acc);color:#0a0d14}
+  .tb-btn.accent:hover{background:#00d886;background:var(--acc)}
+  .tb-btn.ghost{background:transparent;color:var(--txt);border:1px solid var(--line-strong)}
+  .tb-btn.ghost:hover{border-color:var(--txt);background:transparent}
+  .tb-hint{font-size:12px;color:var(--txt-dim);margin-left:auto;font-weight:500}
+
+  /* SHEET (A4) =========================================================== */
+  .sheet{
+    background:var(--bg);
+    max-width:794px;
+    margin:0 auto;
+    padding:56px 64px 48px;
+    box-shadow:0 12px 60px rgba(15,20,35,0.10);
+    border-radius:8px;
+    position:relative;
+  }
+  .sheet::before{
+    content:"";position:absolute;top:0;left:0;right:0;height:4px;
+    background:var(--acc);border-radius:8px 8px 0 0;
+  }
+
+  /* HEADER */
+  header.doc-head{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    padding-bottom:24px;border-bottom:1px solid var(--line);margin-bottom:36px;
+  }
+  .logo{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:-.8px;
+    display:flex;align-items:center;gap:9px}
+  .logo .dot{width:9px;height:9px;border-radius:50%;background:var(--acc)}
+  .meta{text-align:right;font-size:12px;color:var(--txt-dim);font-family:var(--display);letter-spacing:.5px;line-height:1.7}
+  .meta .doc-no{color:var(--txt);font-weight:600;display:inline-block}
+
+  /* TITLE */
+  .title-block{margin-bottom:32px}
+  .title-tag{display:inline-block;font-family:var(--display);font-size:11px;letter-spacing:2px;
+    text-transform:uppercase;color:var(--acc-dark);font-weight:600;
+    border-bottom:2px solid var(--acc);padding-bottom:5px;margin-bottom:18px}
+  h1.title{
+    font-family:var(--display);font-weight:800;
+    font-size:clamp(40px,8vw,72px);line-height:.92;letter-spacing:-3px;
+    text-transform:uppercase;color:var(--txt);
+  }
+  h1.title .acc{color:var(--acc)}
+  .subtitle{font-size:14px;color:var(--txt-dim);margin-top:14px;font-weight:500}
+
+  /* SALUTATION */
+  .salutation{margin-bottom:14px}
+  .salutation .hello{font-family:var(--display);font-size:16px;font-weight:600;color:var(--txt);margin-bottom:14px}
+  .salutation .hello .name{color:var(--acc-dark)}
+  .intro{font-size:14px;color:var(--txt);line-height:1.7}
+
+  /* SECTIONS */
+  section.block{margin-top:34px;position:relative}
+  .block-head{
+    display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;
+  }
+  .block-tag{
+    font-family:var(--display);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--txt-dimmer);font-weight:600;display:inline-block;
+  }
+  .block-tag::before{content:"/ ";color:var(--acc);font-weight:800}
+
+  /* ROWS */
+  .rows{border-top:1px solid var(--line)}
+  .row{display:grid;grid-template-columns:200px 1fr 28px;gap:24px;
+    padding:13px 0;border-bottom:1px solid var(--line);font-size:13.5px;align-items:start;
+    position:relative;
+  }
+  .row .lbl{color:var(--txt-dim);font-weight:500}
+  .row .val{color:var(--txt);font-weight:600}
+
+  /* DELETE BUTTONS (hidden by default, shown on hover or focus) ========= */
+  .btn-del{
+    width:22px;height:22px;border-radius:50%;background:#fff;border:1px solid var(--line-strong);
+    color:var(--txt-dim);font-size:14px;line-height:1;cursor:pointer;
+    display:grid;place-items:center;padding:0;
+    opacity:0;transition:opacity .15s,background .15s,color .15s,border-color .15s,transform .15s;
+    flex-shrink:0;
+  }
+  .btn-del:hover{background:var(--danger);color:#fff;border-color:var(--danger);transform:scale(1.08)}
+
+  .row:hover .btn-del,
+  .row:focus-within .btn-del{opacity:1}
+
+  /* Section-level delete (in header, top-right of block) */
+  .btn-del-section{
+    opacity:0;transition:opacity .15s,background .15s,color .15s,border-color .15s,transform .15s;
+    width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid var(--line-strong);
+    color:var(--txt-dim);font-size:14px;line-height:1;cursor:pointer;
+    display:grid;place-items:center;padding:0;flex-shrink:0;
+  }
+  .btn-del-section:hover{background:var(--danger);color:#fff;border-color:var(--danger);transform:scale(1.08)}
+  section.block:hover .btn-del-section,
+  section.block:focus-within .btn-del-section{opacity:1}
+
+  /* ADD ROW BUTTON */
+  .btn-add{
+    margin-top:10px;background:transparent;border:1.5px dashed var(--line-strong);
+    color:var(--txt-dim);font-family:var(--body);font-size:12.5px;font-weight:600;
+    padding:8px 16px;border-radius:100px;cursor:pointer;
+    transition:border-color .15s,color .15s,background .15s;
+    opacity:0;
+  }
+  section.block:hover .btn-add,
+  section.block:focus-within .btn-add{opacity:1}
+  .btn-add:hover{border-color:var(--acc);color:var(--acc-dark);background:var(--acc-soft);border-style:solid}
+
+  /* TASKS LIST (free-text bullet items) */
+  .tasks{border-top:1px solid var(--line)}
+  .task{
+    display:grid;grid-template-columns:18px 1fr 28px;gap:14px;
+    padding:12px 0;border-bottom:1px solid var(--line);font-size:13.5px;align-items:start;
+  }
+  .task .marker{
+    color:var(--acc);font-family:var(--display);font-weight:800;font-size:14px;
+    line-height:1.55;user-select:none;
+  }
+  .task .task-text{color:var(--txt);font-weight:500;line-height:1.6}
+  .task:hover .btn-del,
+  .task:focus-within .btn-del{opacity:1}
+
+  /* HIGHLIGHT BOX */
+  .highlight{
+    background:var(--acc-soft);border:1.5px solid var(--acc);border-radius:14px;
+    padding:24px 28px;margin-top:18px;position:relative;overflow:hidden;
+  }
+  .highlight::before{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--acc)}
+  .highlight .h-tag{font-family:var(--display);font-size:10.5px;letter-spacing:2px;
+    text-transform:uppercase;color:var(--acc-dark);font-weight:700;margin-bottom:10px}
+  .highlight .h-amount{font-family:var(--display);font-weight:800;font-size:36px;
+    letter-spacing:-1.5px;color:var(--txt);line-height:1.1;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px}
+  .highlight .h-amount .num{display:inline-block;min-width:120px}
+  .highlight .h-amount .cur{color:var(--acc-dark);font-size:24px}
+  .highlight .h-note{font-size:12.5px;color:var(--txt-dim);margin-top:8px}
+
+  .finance-extras{margin-top:18px}
+
+  /* DEADLINE */
+  .deadline{
+    border:1.5px dashed var(--acc);border-radius:12px;padding:18px 22px;margin-top:32px;
+    display:flex;align-items:center;gap:18px;background:var(--acc-soft);position:relative;
+  }
+  .deadline .ico{font-family:var(--display);font-weight:800;font-size:18px;
+    color:var(--acc-dark);background:#fff;border:1.5px solid var(--acc);
+    width:42px;height:42px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
+  .deadline-text{font-size:13.5px;color:var(--txt);flex:1}
+  .deadline-text strong{font-family:var(--display);font-weight:700;color:var(--acc-dark)}
+  .deadline .btn-del-block{
+    opacity:0;transition:opacity .15s;
+    width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid var(--line-strong);
+    color:var(--txt-dim);font-size:14px;line-height:1;cursor:pointer;
+    display:grid;place-items:center;padding:0;flex-shrink:0;
+  }
+  .deadline:hover .btn-del-block{opacity:1}
+  .deadline .btn-del-block:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+
+  /* SIGNATURES */
+  .signatures{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:44px;padding-top:28px;border-top:1px solid var(--line);position:relative}
+  .sig{display:flex;flex-direction:column;position:relative}
+  .sig-tag{font-family:var(--display);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--txt-dimmer);font-weight:600;margin-bottom:14px}
+  .sig-tag::before{content:"/ ";color:var(--acc);font-weight:800}
+  .sig-line{border-bottom:1.5px solid var(--txt);height:42px;margin-bottom:8px}
+  .sig-meta{font-size:11.5px;color:var(--txt-dim);line-height:1.6}
+  .sig-meta .nm{color:var(--txt);font-weight:600;font-size:12.5px;display:block;margin-bottom:2px}
+
+  /* CONTACT */
+  .contact{margin-top:36px;padding:20px 22px;background:var(--bg-soft);border-radius:10px;
+    display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;position:relative}
+  .contact-left{font-size:12px;color:var(--txt-dim)}
+  .contact-left .nm{font-family:var(--display);font-weight:700;color:var(--acc-dark);font-size:13.5px;display:block;margin-bottom:2px}
+  .contact-right{font-size:12.5px;color:var(--txt);font-weight:500;text-align:right;line-height:1.7}
+  .contact-right .email{color:var(--acc-dark);font-weight:600}
+  .contact .btn-del-block{
+    position:absolute;top:8px;right:8px;
+    opacity:0;transition:opacity .15s;
+    width:22px;height:22px;border-radius:50%;background:#fff;border:1px solid var(--line-strong);
+    color:var(--txt-dim);font-size:13px;line-height:1;cursor:pointer;
+    display:grid;place-items:center;padding:0;
+  }
+  .contact:hover .btn-del-block{opacity:1}
+  .contact .btn-del-block:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+
+  /* FOOTER */
+  footer.doc-foot{
+    margin-top:40px;padding-top:18px;border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;color:var(--txt-dimmer);flex-wrap:wrap;gap:10px;
+  }
+  footer.doc-foot .logo{font-size:14px}
+
+  /* ===================================================================== */
+  /* PRINT — clean for PDF */
+  @page{size:A4;margin:14mm}
+  @media print{
+    body{background:#fff;padding:0}
+    .toolbar{display:none !important}
+    .sheet{box-shadow:none;border-radius:0;max-width:none;margin:0;padding:0}
+    .sheet::before{display:none}
+    .btn-del,.btn-del-section,.btn-add,.btn-del-block{display:none !important}
+    [contenteditable]:hover,[contenteditable]:focus{background:transparent !important;box-shadow:none !important}
+    [contenteditable]:empty::before{content:"" !important}
+    .highlight,.deadline,.signatures,.contact{break-inside:avoid}
+  }
+  @media(max-width:720px){
+    .sheet{padding:36px 24px}
+    .row{grid-template-columns:1fr 24px;gap:8px;padding:11px 0}
+    .row .lbl{grid-column:1}
+    .row .val{grid-column:1}
+    .row .btn-del{grid-row:1;grid-column:2}
+    .signatures{grid-template-columns:1fr}
+    .contact{flex-direction:column;align-items:flex-start}
+    .contact-right{text-align:left}
+    h1.title{letter-spacing:-2px}
+  }
+</style>
+</head>
+<body>
+
+<!-- TOOLBAR ============================================================== -->
+<div class="toolbar">
+  <div class="tb-logo"><span class="dot"></span>ADCORP / Job Offer</div>
+  <div class="tb-divider"></div>
+  <button class="tb-btn accent" onclick="window.print()">📄 Скачать PDF</button>
+  <button class="tb-btn ghost" onclick="if(confirm('Сбросить все правки и вернуть шаблон?'))location.reload()">🔄 Сбросить шаблон</button>
+  <span class="tb-hint">Кликни в любое поле и редактируй. Наведи на строку — появится «×» для удаления.</span>
+</div>
+
+<!-- SHEET ================================================================ -->
+<div class="sheet" id="sheet">
+
+  <!-- HEADER -->
+  <header class="doc-head">
+    <div class="logo"><span class="dot"></span>ADCORP</div>
+    <div class="meta">
+      <div><span class="doc-no" contenteditable="true" spellcheck="false" data-placeholder="JO-001/2026">JO-2026</span></div>
+      <div><span contenteditable="true" spellcheck="false" data-placeholder="ДД.ММ.ГГГГ">ДД.ММ.ГГГГ</span></div>
+    </div>
+  </header>
+
+  <!-- TITLE -->
+  <div class="title-block">
+    <h1 class="title">JOB <span class="acc">OFFER</span></h1>
+  </div>
+
+  <!-- SALUTATION -->
+  <div class="salutation">
+    <div class="hello"><span contenteditable="true" spellcheck="false">Уважаемый(-ая)</span> <span class="name" contenteditable="true" spellcheck="false" data-placeholder="Имя">Имя</span>,</div>
+    <p class="intro" contenteditable="true" spellcheck="false">Мы рады предложить вам присоединиться к команде ADCORP. По итогам нашего общения мы убеждены, что ваш опыт и подход к работе помогут нам в развитии продуктов компании.</p>
+  </div>
+
+  <!-- POSITION SECTION -->
+  <section class="block">
+    <div class="block-head">
+      <span class="block-tag">Позиция</span>
+      <button class="btn-del-section" title="Удалить секцию" onclick="this.closest('section').remove()">×</button>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Должность</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="Название должности">Название должности</span><button class="btn-del" title="Удалить строку" onclick="this.closest('.row').remove()">×</button></div>
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Команда</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="Название команды">Название команды</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Руководитель</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="ФИО, должность">ФИО, должность</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+    </div>
+    <button class="btn-add" onclick="addRow(this)">+ Добавить строку</button>
+  </section>
+
+  <!-- TASKS SECTION -->
+  <section class="block">
+    <div class="block-head">
+      <span class="block-tag">Основные задачи</span>
+      <button class="btn-del-section" title="Удалить секцию" onclick="this.closest('section').remove()">×</button>
+    </div>
+    <div class="tasks">
+      <div class="task"><span class="marker">/</span><span class="task-text" contenteditable="true" spellcheck="false" data-placeholder="Опиши первую задачу или зону ответственности"></span><button class="btn-del" title="Удалить задачу" onclick="this.closest('.task').remove()">×</button></div>
+      <div class="task"><span class="marker">/</span><span class="task-text" contenteditable="true" spellcheck="false" data-placeholder="Опиши вторую задачу"></span><button class="btn-del" onclick="this.closest('.task').remove()">×</button></div>
+      <div class="task"><span class="marker">/</span><span class="task-text" contenteditable="true" spellcheck="false" data-placeholder="Опиши третью задачу"></span><button class="btn-del" onclick="this.closest('.task').remove()">×</button></div>
+    </div>
+    <button class="btn-add" onclick="addTask(this)">+ Добавить задачу</button>
+  </section>
+
+  <!-- CONDITIONS SECTION -->
+  <section class="block">
+    <div class="block-head">
+      <span class="block-tag">Условия работы</span>
+      <button class="btn-del-section" onclick="this.closest('section').remove()">×</button>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Формат работы</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="офис / удалённо / гибрид">Офис / удалённо / гибрид</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Локация офиса</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="Город, адрес">Город, адрес</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">График работы</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="5/2, пн–пт, 10:00–19:00">5/2, пн–пт, 10:00–19:00</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Испытательный срок</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="1-3 месяца">1-3 месяца</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+    </div>
+    <button class="btn-add" onclick="addRow(this)">+ Добавить строку</button>
+  </section>
+
+  <!-- FINANCE SECTION -->
+  <section class="block">
+    <div class="block-head">
+      <span class="block-tag">Финансовые условия</span>
+      <button class="btn-del-section" onclick="this.closest('section').remove()">×</button>
+    </div>
+
+    <div class="highlight">
+      <div class="h-tag">Оклад в размере</div>
+      <div class="h-amount">
+        <span class="num" contenteditable="true" spellcheck="false" data-placeholder="000 000">000 000</span>
+        <span class="cur" contenteditable="true" spellcheck="false">₽ / месяц</span>
+      </div>
+    </div>
+
+    <div class="finance-extras rows">
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Премиальная часть</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="условия премирования / KPI">условия премирования / KPI</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Бонусы и доп. выплаты</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="при наличии — указать">при наличии — указать</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Периодичность выплат</span><span class="val" contenteditable="true" spellcheck="false">2 раза в месяц</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+    </div>
+    <button class="btn-add" onclick="addRow(this)">+ Добавить строку</button>
+  </section>
+
+  <!-- ADDITIONAL SECTION -->
+  <section class="block">
+    <div class="block-head">
+      <span class="block-tag">Дополнительно</span>
+      <button class="btn-del-section" onclick="this.closest('section').remove()">×</button>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Оборудование</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="предоставляется компанией / своё">предоставляется компанией / своё</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Отпуск</span><span class="val" contenteditable="true" spellcheck="false">22 рабочих дня + дополнительные дни</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+      <div class="row"><span class="lbl" contenteditable="true" spellcheck="false">Прочие условия</span><span class="val" contenteditable="true" spellcheck="false" data-placeholder="свободное поле">свободное поле</span><button class="btn-del" onclick="this.closest('.row').remove()">×</button></div>
+    </div>
+    <button class="btn-add" onclick="addRow(this)">+ Добавить строку</button>
+  </section>
+
+  <!-- DEADLINE -->
+  <div class="deadline">
+    <div class="ico">!</div>
+    <div class="deadline-text">
+      Просим сообщить о вашем решении до <strong contenteditable="true" spellcheck="false" data-placeholder="ДД.ММ.ГГГГ">ДД.ММ.ГГГГ</strong>.
+      <span contenteditable="true" spellcheck="false">После этой даты предложение может быть пересмотрено.</span>
+    </div>
+    <button class="btn-del-block" title="Удалить блок" onclick="this.closest('.deadline').remove()">×</button>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="contact">
+    <div class="contact-left">
+      <span class="nm" contenteditable="true" spellcheck="false" data-placeholder="Имя">Имя</span>
+      <div contenteditable="true" spellcheck="false">HR-менеджер</div>
+    </div>
+    <div class="contact-right">
+      <div contenteditable="true" spellcheck="false" data-placeholder="+7 000 000-00-00">+7 000 000-00-00</div>
+      <div><span class="email" contenteditable="true" spellcheck="false" data-placeholder="@telegram">@telegram</span></div>
+    </div>
+    <button class="btn-del-block" onclick="this.closest('.contact').remove()">×</button>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="doc-foot">
+    <div class="logo"><span class="dot"></span>ADCORP</div>
+    <div contenteditable="true" spellcheck="false">Конфиденциально · Документ предназначен только для адресата</div>
+    <div>© 2011–2026 ADCORP</div>
+  </footer>
+
+</div>
+
+<script>
+  // Add new editable row to a section's .rows
+  function addRow(btn){
+    const section = btn.closest('section');
+    const rows = section.querySelector('.rows');
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `
+      <span class="lbl" contenteditable="true" spellcheck="false" data-placeholder="Название поля"></span>
+      <span class="val" contenteditable="true" spellcheck="false" data-placeholder="Значение"></span>
+      <button class="btn-del" title="Удалить строку" onclick="this.closest('.row').remove()">×</button>
+    `;
+    rows.appendChild(row);
+    row.querySelector('.lbl').focus();
+  }
+
+  // Add new task item to the tasks section
+  function addTask(btn){
+    const section = btn.closest('section');
+    const tasks = section.querySelector('.tasks');
+    const task = document.createElement('div');
+    task.className = 'task';
+    task.innerHTML = `
+      <span class="marker">/</span>
+      <span class="task-text" contenteditable="true" spellcheck="false" data-placeholder="Опиши задачу"></span>
+      <button class="btn-del" title="Удалить задачу" onclick="this.closest('.task').remove()">×</button>
+    `;
+    tasks.appendChild(task);
+    task.querySelector('.task-text').focus();
+  }
+</script>
+
+</body>
+</html>
