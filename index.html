@@ -268,21 +268,7 @@
   footer.doc-foot .logo{font-size:14px}
 
   /* ===================================================================== */
-  /* PRINT — clean for PDF (same rules used for direct PDF download via .printing class) */
-  body.printing{background:#fff !important;padding:0 !important}
-  body.printing .toolbar{display:none !important}
-  body.printing .sheet{box-shadow:none !important;border-radius:0 !important;max-width:none !important;margin:0 !important;padding:32px 40px !important}
-  body.printing .sheet::before{display:none !important}
-  body.printing .btn-del,
-  body.printing .btn-del-section,
-  body.printing .btn-add,
-  body.printing .btn-del-block{display:none !important}
-  body.printing [contenteditable]:hover,
-  body.printing [contenteditable]:focus{background:transparent !important;box-shadow:none !important}
-  body.printing [contenteditable]:empty::before{content:"" !important}
-  body.printing .row{grid-template-columns:200px 1fr !important}
-  body.printing .task{grid-template-columns:18px 1fr !important}
-
+  /* PRINT — clean for PDF */
   @page{size:A4;margin:14mm}
   @media print{
     body{background:#fff;padding:0}
@@ -306,7 +292,6 @@
     h1.title{letter-spacing:-2px}
   }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -314,7 +299,7 @@
 <div class="toolbar">
   <div class="tb-logo"><span class="dot"></span>ADCORP / Job Offer</div>
   <div class="tb-divider"></div>
-  <button class="tb-btn accent" onclick="downloadPDF(this)">📄 Скачать PDF</button>
+  <button class="tb-btn accent" onclick="window.print()">📄 Скачать PDF</button>
   <button class="tb-btn ghost" onclick="if(confirm('Сбросить все правки и вернуть шаблон?'))location.reload()">🔄 Сбросить шаблон</button>
   <span class="tb-hint">Кликни в любое поле и редактируй. Наведи на строку — появится «×» для удаления.</span>
 </div>
@@ -455,47 +440,6 @@
 </div>
 
 <script>
-  // Direct PDF download via html2pdf.js
-  async function downloadPDF(btn){
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '⏳ Готовим PDF...';
-    btn.disabled = true;
-
-    try {
-      // Wait for web fonts (Unbounded, Manrope) to be fully loaded
-      if (document.fonts && document.fonts.ready) {
-        await document.fonts.ready;
-      }
-
-      // Switch to clean "printing" look (hide toolbar, delete buttons, etc.)
-      document.body.classList.add('printing');
-
-      const sheet = document.getElementById('sheet');
-      const filename = 'ADCORP_Job_Offer.pdf';
-
-      await html2pdf().set({
-        margin: [10, 10, 10, 10],
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          letterRendering: true,
-          backgroundColor: '#ffffff',
-          windowWidth: 900
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait', compress: true },
-        pagebreak: { mode: ['css', 'legacy'], avoid: ['.highlight','.deadline','.contact','.task','.row'] }
-      }).from(sheet).save();
-    } catch (err) {
-      console.error(err);
-      alert('Не удалось собрать PDF. Попробуй ещё раз или используй системную печать (Ctrl/Cmd+P → Сохранить как PDF).');
-    } finally {
-      document.body.classList.remove('printing');
-      btn.innerHTML = originalText;
-      btn.disabled = false;
-    }
-  }
   // Add new editable row to a section's .rows
   function addRow(btn){
     const section = btn.closest('section');
